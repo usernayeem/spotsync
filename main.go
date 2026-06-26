@@ -42,6 +42,11 @@ func main() {
 	zoneService := service.NewZoneService(zoneRepo)
 	zoneHandler := handler.NewZoneHandler(zoneService)
 
+	// Dependency Injection for Reservation Module
+	reservationRepo := repository.NewReservationRepository(db)
+	reservationService := service.NewReservationService(reservationRepo)
+	reservationHandler := handler.NewReservationHandler(reservationService)
+
 	// Initialize Echo instance
 	e := echo.New()
 
@@ -72,6 +77,18 @@ func main() {
 	
 	// Create zone requires Auth and Admin role
 	zoneGroup.POST("", zoneHandler.CreateZone, middlewares.RequireAuth, middlewares.RequireAdmin)
+
+	// Reservation Routes
+	reservationGroup := api.Group("/reservations")
+	// Must be logged in to access these
+	reservationGroup.Use(middlewares.RequireAuth)
+	
+	reservationGroup.POST("", reservationHandler.ReserveSpot)
+	reservationGroup.GET("/my-reservations", reservationHandler.GetMyReservations)
+	reservationGroup.DELETE("/:id", reservationHandler.CancelReservation)
+	
+	// Admin only
+	reservationGroup.GET("", reservationHandler.GetAllReservations, middlewares.RequireAdmin)
 
 	// Start server
 	port := os.Getenv("PORT")
