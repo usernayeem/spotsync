@@ -9,7 +9,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/usernayeem/spotsync/config"
+	"github.com/usernayeem/spotsync/handler"
 	"github.com/usernayeem/spotsync/models"
+	"github.com/usernayeem/spotsync/repository"
+	"github.com/usernayeem/spotsync/service"
 )
 
 func main() {
@@ -28,6 +31,11 @@ func main() {
 	}
 	log.Println("Database migration completed successfully")
 
+	// Dependency Injection for Auth Module
+	userRepo := repository.NewUserRepository(db)
+	authService := service.NewAuthService(userRepo)
+	authHandler := handler.NewAuthHandler(authService)
+
 	// Initialize Echo instance
 	e := echo.New()
 
@@ -42,6 +50,14 @@ func main() {
 			"message": "pong",
 		})
 	})
+
+	// API Routes Group
+	api := e.Group("/api/v1")
+	
+	// Auth Routes
+	authGroup := api.Group("/auth")
+	authGroup.POST("/register", authHandler.Register)
+	authGroup.POST("/login", authHandler.Login)
 
 	// Start server
 	port := os.Getenv("PORT")
