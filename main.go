@@ -10,6 +10,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/usernayeem/spotsync/config"
 	"github.com/usernayeem/spotsync/handler"
+	"github.com/usernayeem/spotsync/middlewares"
 	"github.com/usernayeem/spotsync/models"
 	"github.com/usernayeem/spotsync/repository"
 	"github.com/usernayeem/spotsync/service"
@@ -36,6 +37,11 @@ func main() {
 	authService := service.NewAuthService(userRepo)
 	authHandler := handler.NewAuthHandler(authService)
 
+	// Dependency Injection for Zone Module
+	zoneRepo := repository.NewZoneRepository(db)
+	zoneService := service.NewZoneService(zoneRepo)
+	zoneHandler := handler.NewZoneHandler(zoneService)
+
 	// Initialize Echo instance
 	e := echo.New()
 
@@ -58,6 +64,14 @@ func main() {
 	authGroup := api.Group("/auth")
 	authGroup.POST("/register", authHandler.Register)
 	authGroup.POST("/login", authHandler.Login)
+
+	// Zone Routes
+	zoneGroup := api.Group("/zones")
+	zoneGroup.GET("", zoneHandler.GetAllZones)       // Public
+	zoneGroup.GET("/:id", zoneHandler.GetZoneByID)   // Public
+	
+	// Create zone requires Auth and Admin role
+	zoneGroup.POST("", zoneHandler.CreateZone, middlewares.RequireAuth, middlewares.RequireAdmin)
 
 	// Start server
 	port := os.Getenv("PORT")
