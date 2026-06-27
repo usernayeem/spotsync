@@ -54,10 +54,12 @@ func (h *ReservationHandler) ReserveSpot(c echo.Context) error {
 		"message": "Reservation confirmed successfully",
 		"data": map[string]interface{}{
 			"id":            reservation.ID,
+			"user_id":       reservation.UserID,
 			"zone_id":       reservation.ZoneID,
 			"license_plate": reservation.LicensePlate,
 			"status":        reservation.Status,
 			"created_at":    reservation.CreatedAt,
+			"updated_at":    reservation.UpdatedAt,
 		},
 	})
 }
