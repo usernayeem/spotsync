@@ -49,7 +49,14 @@ func (h *AuthHandler) Register(c echo.Context) error {
 	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"success": true,
 		"message": "User registered successfully",
-		"data":    user,
+		"data": dto.UserResponse{
+			ID:        user.ID,
+			Name:      user.Name,
+			Email:     user.Email,
+			Role:      user.Role,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		},
 	})
 }
 
@@ -83,7 +90,12 @@ func (h *AuthHandler) Login(c echo.Context) error {
 		"message": "Login successful",
 		"data": map[string]interface{}{
 			"token": token,
-			"user":  user,
+			"user": dto.UserResponse{
+				ID:    user.ID,
+				Name:  user.Name,
+				Email: user.Email,
+				Role:  user.Role,
+			},
 		},
 	})
 }

@@ -1,6 +1,6 @@
 package dto
 
-import "github.com/usernayeem/spotsync/models"
+import "time"
 
 type RegisterRequest struct {
 	Name     string `json:"name" validate:"required"`
@@ -14,7 +14,12 @@ type LoginRequest struct {
 	Password string `json:"password" validate:"required"`
 }
 
-type AuthResponse struct {
-	Token string       `json:"token,omitempty"`
-	User  *models.User `json:"user"`
+// UserResponse defines the user fields returned in API responses.
+type UserResponse struct {
+	ID        uint      `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Role      string    `json:"role"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
