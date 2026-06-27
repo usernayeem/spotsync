@@ -82,3 +82,40 @@ func (s *ZoneService) GetZoneByID(id uint) (*dto.ZoneResponse, error) {
 
 	return response, nil
 }
+
+func (s *ZoneService) UpdateZone(id uint, req dto.UpdateZoneRequest) (*models.ParkingZone, error) {
+	zone, err := s.zoneRepo.GetZoneByID(id)
+	if err != nil {
+		return nil, errors.New("parking zone not found")
+	}
+
+	// Build only the fields that were actually provided
+	updates := map[string]interface{}{}
+	if req.Name != nil {
+		updates["name"] = *req.Name
+	}
+	if req.Type != nil {
+		updates["type"] = *req.Type
+	}
+	if req.TotalCapacity != nil {
+		updates["total_capacity"] = *req.TotalCapacity
+	}
+	if req.PricePerHour != nil {
+		updates["price_per_hour"] = *req.PricePerHour
+	}
+
+	if err := s.zoneRepo.UpdateZone(zone, updates); err != nil {
+		return nil, err
+	}
+
+	return zone, nil
+}
+
+func (s *ZoneService) DeleteZone(id uint) error {
+	_, err := s.zoneRepo.GetZoneByID(id)
+	if err != nil {
+		return errors.New("parking zone not found")
+	}
+	return s.zoneRepo.DeleteZone(id)
+}
+

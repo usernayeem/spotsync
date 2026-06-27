@@ -75,8 +75,11 @@ func main() {
 	zoneGroup.GET("", zoneHandler.GetAllZones)       // Public
 	zoneGroup.GET("/:id", zoneHandler.GetZoneByID)   // Public
 	
-	// Create zone requires Auth and Admin role
+	// Admin only zone management
 	zoneGroup.POST("", zoneHandler.CreateZone, middlewares.RequireAuth, middlewares.RequireAdmin)
+	zoneGroup.PATCH("/:id", zoneHandler.UpdateZone, middlewares.RequireAuth, middlewares.RequireAdmin)
+	zoneGroup.DELETE("/:id", zoneHandler.DeleteZone, middlewares.RequireAuth, middlewares.RequireAdmin)
+
 
 	// Reservation Routes
 	reservationGroup := api.Group("/reservations")

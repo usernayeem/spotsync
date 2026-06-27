@@ -9,6 +9,15 @@ type CreateZoneRequest struct {
 	PricePerHour  float64 `json:"price_per_hour" validate:"required,gt=0"`
 }
 
+// UpdateZoneRequest uses pointers so fields are optional (only update what is provided)
+type UpdateZoneRequest struct {
+	Name          *string  `json:"name"`
+	Type          *string  `json:"type" validate:"omitempty,oneof=general ev_charging covered"`
+	TotalCapacity *int     `json:"total_capacity" validate:"omitempty,min=1"`
+	PricePerHour  *float64 `json:"price_per_hour" validate:"omitempty,gt=0"`
+}
+
+
 type ZoneResponse struct {
 	ID             uint      `json:"id"`
 	Name           string    `json:"name"`

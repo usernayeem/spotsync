@@ -94,3 +94,76 @@ func (h *ZoneHandler) GetZoneByID(c echo.Context) error {
 		"data":    zone,
 	})
 }
+
+func (h *ZoneHandler) UpdateZone(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"success": false,
+			"message": "Invalid zone ID",
+		})
+	}
+
+	var req dto.UpdateZoneRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"success": false,
+			"message": "Invalid request body",
+		})
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"success": false,
+			"message": "Validation failed",
+			"errors":  err.Error(),
+		})
+	}
+
+	zone, err := h.zoneService.UpdateZone(uint(id), req)
+	if err != nil {
+		statusCode := http.StatusInternalServerError
+		if err.Error() == "parking zone not found" {
+			statusCode = http.StatusNotFound
+		}
+		return c.JSON(statusCode, map[string]interface{}{
+			"success": false,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"success": true,
+		"message": "Parking zone updated successfully",
+		"data":    zone,
+	})
+}
+
+func (h *ZoneHandler) DeleteZone(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"success": false,
+			"message": "Invalid zone ID",
+		})
+	}
+
+	if err := h.zoneService.DeleteZone(uint(id)); err != nil {
+		statusCode := http.StatusInternalServerError
+		if err.Error() == "parking zone not found" {
+			statusCode = http.StatusNotFound
+		}
+		return c.JSON(statusCode, map[string]interface{}{
+			"success": false,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"success": true,
+		"message": "Parking zone deleted successfully",
+	})
+}
+

@@ -40,3 +40,14 @@ func (r *ZoneRepository) GetActiveReservationCount(zoneID uint) (int64, error) {
 		Count(&count).Error
 	return count, err
 }
+
+// UpdateZone applies partial updates to an existing parking zone
+func (r *ZoneRepository) UpdateZone(zone *models.ParkingZone, updates map[string]interface{}) error {
+	return r.db.Model(zone).Updates(updates).Error
+}
+
+// DeleteZone permanently removes a parking zone by ID
+func (r *ZoneRepository) DeleteZone(id uint) error {
+	return r.db.Delete(&models.ParkingZone{}, id).Error
+}
+
