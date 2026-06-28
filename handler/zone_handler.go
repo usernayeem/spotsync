@@ -50,7 +50,15 @@ func (h *ZoneHandler) CreateZone(c echo.Context) error {
 	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"success": true,
 		"message": "Parking zone created successfully",
-		"data":    zone,
+		"data": map[string]interface{}{
+			"id":             zone.ID,
+			"name":           zone.Name,
+			"type":           zone.Type,
+			"total_capacity": zone.TotalCapacity,
+			"price_per_hour": zone.PricePerHour,
+			"created_at":     zone.CreatedAt,
+			"updated_at":     zone.UpdatedAt,
+		},
 	})
 }
 
@@ -136,7 +144,15 @@ func (h *ZoneHandler) UpdateZone(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"success": true,
 		"message": "Parking zone updated successfully",
-		"data":    zone,
+		"data": map[string]interface{}{
+			"id":             zone.ID,
+			"name":           zone.Name,
+			"type":           zone.Type,
+			"total_capacity": zone.TotalCapacity,
+			"price_per_hour": zone.PricePerHour,
+			"created_at":     zone.CreatedAt,
+			"updated_at":     zone.UpdatedAt,
+		},
 	})
 }
 

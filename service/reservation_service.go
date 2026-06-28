@@ -33,7 +33,11 @@ func (s *ReservationService) GetMyReservations(userID uint) ([]dto.ReservationRe
 			ID:           res.ID,
 			LicensePlate: res.LicensePlate,
 			Status:       res.Status,
-			Zone:         &res.Zone,
+			Zone: &dto.ReservationZoneResponse{
+				ID:   res.Zone.ID,
+				Name: res.Zone.Name,
+				Type: res.Zone.Type,
+			},
 			CreatedAt:    res.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
 		})
 	}
@@ -63,6 +67,39 @@ func (s *ReservationService) CancelReservation(userID uint, reservationID uint) 
 	return s.reservationRepo.UpdateReservationStatus(reservationID, "cancelled")
 }
 
-func (s *ReservationService) GetAllReservations() ([]models.Reservation, error) {
-	return s.reservationRepo.GetAllReservations()
+func (s *ReservationService) GetAllReservations() ([]dto.AdminReservationResponse, error) {
+	reservations, err := s.reservationRepo.GetAllReservations()
+	if err != nil {
+		return nil, err
+	}
+
+	var responses []dto.AdminReservationResponse
+	for _, res := range reservations {
+		responses = append(responses, dto.AdminReservationResponse{
+			ID:           res.ID,
+			UserID:       res.UserID,
+			User: &dto.AdminUserResponse{
+				ID:    res.User.ID,
+				Name:  res.User.Name,
+				Email: res.User.Email,
+				Role:  res.User.Role,
+			},
+			ZoneID: res.ZoneID,
+			Zone: &dto.ReservationZoneResponse{
+				ID:   res.Zone.ID,
+				Name: res.Zone.Name,
+				Type: res.Zone.Type,
+			},
+			LicensePlate: res.LicensePlate,
+			Status:       res.Status,
+			CreatedAt:    res.CreatedAt,
+			UpdatedAt:    res.UpdatedAt,
+		})
+	}
+
+	if responses == nil {
+		responses = []dto.AdminReservationResponse{}
+	}
+
+	return responses, nil
 }
