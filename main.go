@@ -62,6 +62,11 @@ func main() {
 		})
 	})
 
+	// Root welcome route
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "SpotSync Server is running!")
+	})
+
 	// API Routes Group
 	api := e.Group("/api/v1")
 	
