@@ -2,8 +2,9 @@
 
 > Smart Parking & EV Charging Reservation — A centralized platform for airports and malls to manage parking zones and handle high-demand EV charging spot reservations.
 
-**Live URL:** `https://spotsync-production.up.railway.app`  
-**GitHub:** `https://github.com/usernayeem/spotsync`
+**Live URL:** [https://spotsync-production.up.railway.app](https://spotsync-production.up.railway.app)  
+**Health Check:** [https://spotsync-production.up.railway.app/ping](https://spotsync-production.up.railway.app/ping)  
+**API Zones:** [https://spotsync-production.up.railway.app/api/v1/zones](https://spotsync-production.up.railway.app/api/v1/zones)  
 
 ---
 
